@@ -13,8 +13,6 @@
 ## Style Guide
 - tab characters: spaces
 - tab size: 4
-- sublime line endings: system
-- git line endings: git config core.autocrlf true
 - sass method: no bem
 - sass style: camelCase
 - file/folder names: all lower, underscores for spaces
