@@ -30,3 +30,10 @@ Thumbs.dll
 *.dmg
 *.iso
 *.jar
+
+
+# Node #
+#################
+/node_modules
+/public/scripts
+/public/styles
