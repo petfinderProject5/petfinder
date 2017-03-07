@@ -35,5 +35,4 @@ Thumbs.dll
 # Node #
 #################
 /node_modules
-/public/scripts
-/public/styles
+/public/assets
