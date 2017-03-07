@@ -2,7 +2,8 @@
 # Custom #
 ##########
 /working_files
-
+*.sublime-project
+*.sublime-workspace
 
 # OS generated files #
 ######################
@@ -29,3 +30,9 @@ Thumbs.dll
 *.dmg
 *.iso
 *.jar
+
+
+# Node #
+#################
+/node_modules
+/public/assets
