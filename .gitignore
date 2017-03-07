@@ -2,7 +2,8 @@
 # Custom #
 ##########
 /working_files
-
+*.sublime-project
+*.sublime-workspace
 
 # OS generated files #
 ######################
