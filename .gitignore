@@ -1,0 +1,31 @@
+
+# Custom #
+##########
+/working_files
+
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows generated files #
+###########################
+Thumbs.dll
+
+# Archive Files #
+#################
+*.zip
+*.rar
+*.tar.bz
+*.gz
+*.xz
+*.7z
+*.dmg
+*.iso
+*.jar
