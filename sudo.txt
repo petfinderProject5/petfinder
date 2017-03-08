@@ -1,0 +1,49 @@
+Get user location either by user input or geo-location
+Move search bar (turn into icon) out of the way
+IF userInput 
+    Every userInput hit google autocomplete api - returns a max of 5 auto complete matches
+    Display autocomplete results in a dropdown
+    Whatever autocomplete choice is selected that is passed into the "places API"
+    Whatever that returns - use that data to place the UserLocationMarker 
+IF autolocation try to get userlocation automatically 
+    IF it fails - Obscure location, or cant locate, or access denied 
+    Throw ERROR 
+    USER MUST USE MANUEL LOCATION SEARCH
+
+    // Manual Location Search
+    Google autocomplete(searchString) -> returns(5 predicitons) -> user selects one -> get place_id from choice
+    Google revesere geolocation(place_id) -> get potalCode from result
+    // Auto Location Service
+    navigator.geolocation -> returns location -> get lat and lng
+    Google revesere geolocation(lat lng) -> get potalCode from result
+    // Find near by pets
+    Petfinder API -> postalcode
+
+
+    Take user Input - validate
+    GET list of available shelters with birds avaialbe-
+    Plot those shelters on a map. 
+    Display info card on each bird available at the selected shelter. 
+
+
+
+
+
+
+
+    API INFO
+
+    https://developers.google.com/maps/web-services/overview
+ 
+    https://developers.google.com/places/web-service/autocomplete
+
+    API Key
+    5643b4e4140ed1e99bc21e6bbbfb3fd6
+
+    API Secret
+    c17550309729a14e12556398e93bab23
+    API Status
+    Active 
+
+
+
