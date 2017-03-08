@@ -1,5 +1,7 @@
 var papp = {};
 
+papp.map;
+
 papp.elements = {
     $petDetails: $('#petDetails'),
     $petGallery: $('#petGallery'),
@@ -11,6 +13,8 @@ papp.elements = {
     $petDescription: $('#petDescription'),
     $petAddress: $('#petAddress')
 };
+
+papp.pets = data.petfinder.pets.pet;
 
 const data = {
   "@encoding": "iso-8859-1",
@@ -2159,9 +2163,6 @@ const data = {
   }
 };
 
-papp.pets = data.petfinder.pets.pet;
-
-
 papp.displayPetMedia = function(media) {
     papp.elements.$petGallery.empty();
     const $imageCarousel = $('<div>')
@@ -2228,6 +2229,46 @@ papp.displayPetInfo = function(petIndex) {
     // papp.elements.$petBreed
 };
 
+
+papp.initMap = function() {
+    papp.map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 50.09024, lng: -95.712891},
+    zoom: 4
+    });
+
+    papp.infoWindow = new google.maps.InfoWindow({map: papp.map});
+
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+
+        papp.infoWindow.setPosition(pos);
+        papp.infoWindow.setContent('Location found.');
+        papp.map.setCenter(pos);
+        papp.map.setZoom(16);
+    }, 
+    function() {
+        papp.handleLocationError(true, papp.infoWindow, papp.map.getCenter());
+    });
+
+    } 
+    else {
+        // Browser doesn't support Geolocation
+        papp.handleLocationError(false, papp.infoWindow, papp.map.getCenter());
+    }
+}
+
+papp.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
+    papp.infoWindow.setPosition(pos);
+    papp.infoWindow.setContent(browserHasGeolocation ?
+                        'Error: The Geolocation service failed.' :
+                        'Error: Your browser doesn\'t support geolocation.');
+}
+
 papp.events = function() {
     $('button').on('click', function() {
         const buttonClicked = $(this);
@@ -2246,10 +2287,11 @@ papp.events = function() {
     });
 };
 
-papp.init = function() {
+papp.init = function(){
+    papp.initMap();
     papp.events();
 }
 
-$(function() {
+$(function(){
     papp.init();
 });
