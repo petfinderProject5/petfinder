@@ -19,7 +19,7 @@ IF autolocation try to get userlocation automatically
     // Find near by pets
     Petfinder API -> postalcode
 
-
+`   Then
     Take user Input - validate
     GET list of available shelters with birds avaialbe-
     Plot those shelters on a map. 
