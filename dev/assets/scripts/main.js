@@ -279,7 +279,6 @@ papp.getShelters = function(location) {
             format: 'json',
             location: location
         }
-        
     }).then(function(petfinderInfo){
         papp.petData = petfinderInfo.petfinder.pets.pet;
         // console.log(papp.petData);
@@ -320,10 +319,12 @@ papp.events = function() {
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
 
-        // console.log('form submitted')
+        console.log('form submitted')
         if(papp.userSearchInputResult !== undefined) {
             papp.placeToPos(papp.userSearchInputResult);
         }
+
+        $('.searchOverlay').addClass('searchOverlayTop');
     });
 
     papp.searchField.on('input', function(event) {
