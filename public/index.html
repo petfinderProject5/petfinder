@@ -4,14 +4,33 @@
     <meta charset="UTF-8">
     <title>Petfinder</title>
     <link rel="stylesheet" href="assets/styles/style.css">
-
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 </head>
 <body>
-    <div id="map"> 	
+    <div id="map"></div>
+
+    <button value="pet1">pet 1</button>
+    <button value="pet2">pet 2</button>
+    <button value="pet3">pet 3</button>
+    <button value="pet4">pet 4</button>
+
+    <div id="petDetails">
+        <div id="petGallery"></div>
+        <div id="petInfo">
+            <div id="petName"></div>
+            <div id="petBreed"></div>
+            <div id="petGender"></div>
+            <div id="petAge"></div>
+            <div id="petDescription"></div>
+            <div id="petAddress"></div>
+        </div>
     </div>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk"></script>
-	<script src="assets/scripts/main.js"></script>
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+    <script src="assets/scripts/main.js"></script>
 </body>
 </html>
