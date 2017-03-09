@@ -4,13 +4,24 @@
     <meta charset="UTF-8">
     <title>Petfinder</title>
     <link rel="stylesheet" href="assets/styles/style.css">
+    <!-- <link rel="stylesheet" href="jquery-ui.min.css"> -->
 
 </head>
 <body>
+
+    <div class="searchOverlay">
+    	<form class="searchForm">
+    		<input type="text" id="searchField" placeholder="Enter your city">
+            <button id="submitButton" type="submit">Go</button>
+
+    	</form>
+    </div>
+
     <div id="map"> 	
     </div>
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk"></script>
 	<script src="assets/scripts/main.js"></script>
 </body>
