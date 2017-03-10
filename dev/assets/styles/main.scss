@@ -3,19 +3,42 @@
 
 
 html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-.container {
-	max-width: 900px;
-	margin: 0 auto;
-    color: goldenrod;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  color: goldenrod;
+}
+
+/* Always set the map height explicitly to define the size of the div * element that contains the map. */
+#map {
+  height: 100vh; 
+}
+
+.searchOverlay {
+  height: 100vh;
+  width: 100%;
+  z-index: 10;
+  position: absolute;
+  background-color: rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchOverlay h1 {
+  color: white;
+
+}
+//Class is added on button select
+.searchOverlayTop {
+  padding: 20px 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 60px;
+}
