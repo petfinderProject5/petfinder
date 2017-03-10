@@ -1,6 +1,9 @@
 @import 'setup';
 @import 'carousel';
-@import '_petDisplay';
+@import 'petInfo';
+@import 'petsDisplay';
+@import 'variables';
+
 
 
 html, body {
@@ -15,6 +18,14 @@ html, body {
   color: goldenrod;
 }
 
+.wrapper {
+  max-width: 1170px;
+}
+
+h1 {
+  font-family: $brandHeadline;
+  letter-spacing: 2px;
+}
 /* Always set the map height explicitly to define the size of the div * element that contains the map. */
 #map {
   height: 100vh; 
@@ -42,11 +53,24 @@ html, body {
   flex-direction: row;
   justify-content: space-between;
   height: 60px;
+  background-color: $brandGreen;
 }
 
 .wrapper{
-  // width: 80%;
   max-width: 1170px;
   border: 1px solid black;
   margin: 0 auto;
 }
+
+.ui-autocomplete {
+    z-index: 2;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: #FFFFFF;
+    max-width: 500px;
+    position: absolute;
+    top: 0;
+  }
+
+

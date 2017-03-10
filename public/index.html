@@ -5,6 +5,7 @@
     <title>Petfinder</title>
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Open+Sans" rel="stylesheet">
 </head>
 <body>
 
@@ -12,12 +13,13 @@
     	<h1> Birdfinder </h1>
     	<form id="searchForm">
     		<input type="text" id="searchField" placeholder="Enter your city">
-            <button id="submitButton" type="submit">Go</button>
+            <button id="submitButton" type="submit">Submit</button>
             <button id="autolocate">Auto locate</button>
     	</form>
     </div>
 
     <div id="map"></div>
+
     <div class="wrapper">
         <!-- Top pet display -->
         <!-- Gallery -->
@@ -36,9 +38,19 @@
                     <div id="petAddress" class="address"></div>
                 </div>
         </div>
-        
+
+        <div class="petsDisplay">
+            
+        </div>
         
     </div>
+    <!-- END WRAPPER -->
+
+
+		
+		
+		
+
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
