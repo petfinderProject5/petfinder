@@ -3,14 +3,16 @@
 @import 'petsDisplay';
 @import 'variables';
 
-$green:#3E6858;
-$grey:#C1C1C1;
-$black:#2B2B2B;
+
+h1, h2, h3, h4, h5, h6, p{
+  margin: 0;
+}
 
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: lighten($brandGreen, 60);
 }
 
 .container {
@@ -21,6 +23,9 @@ html, body {
 
 .wrapper {
   max-width: 1170px;
+  margin: 0 auto;
+  background-color: white;
+
 }
 
 h1 {
@@ -37,7 +42,7 @@ h1 {
   width: 100%;
   z-index: 10;
   position: absolute;
-  background-color: rgba(0,0,0,0.5);
+  background-color: darken(rgba(63, 105, 89, 0.5),20);
   display:flex;
   flex-direction: column;
   justify-content: center;
@@ -53,14 +58,14 @@ h1 {
   padding: 20px 20px;
   flex-direction: row;
   justify-content: space-between;
-  height: 60px;
+  height: 80px;
   background-color: $brandGreen;
 
 }
 
 //Style map view birds button
 button.viewDetails {
-	background: $green;
+	background: $brandGreen;
 	color:white;
 	border:none;
 	padding:5px 10px;
@@ -78,7 +83,6 @@ button.viewDetails:hover {
 	align-items:center;
 	flex-direction:column;
 }
-
 
 .ui-autocomplete {
     z-index: 2;
