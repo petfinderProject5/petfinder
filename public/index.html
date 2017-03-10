@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 </head>
 <body>
+
+    <div class="searchOverlay">
+    	<h1> Birdfinder </h1>
+    	<form id="searchForm">
+    		<input type="text" id="searchField" placeholder="Enter your city">
+            <button id="submitButton" type="submit">Go</button>
+            <button id="autolocate">Auto locate</button>
+    	</form>
+    </div>
+
     <div id="map"></div>
 
     <button value="pet1">pet 1</button>
@@ -32,5 +42,6 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk"></script>
     <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script src="assets/scripts/main.js"></script>
+
 </body>
 </html>

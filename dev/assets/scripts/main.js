@@ -86,7 +86,6 @@ papp.displayPetInfo = function(petIndex) {
     // papp.elements.$petBreed
 };
 
-
 papp.initMap = function() {
     papp.map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 50.09024, lng: -95.712891},
@@ -96,6 +95,9 @@ papp.initMap = function() {
     papp.infoWindow = new google.maps.InfoWindow({map: papp.map});
 
     // Try HTML5 geolocation.
+}
+
+papp.locateUser = function () {
     if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
         var pos = {
@@ -108,7 +110,7 @@ papp.initMap = function() {
         papp.map.setCenter(pos);
         papp.map.setZoom(16);
         papp.generateMapMarker(pos);
-        console.log(pos);
+        // console.log(pos);
         papp.reverseGeolocation(pos);
     }, 
     function() {
@@ -136,22 +138,108 @@ papp.generateMapMarker = function(place) {
     });
 }
 
+//-------------------------------------------PLACES API SEARCH ----------------------------
+
+papp.searchFor = function(searchString) {
+    const response = $.ajax({
+        url: 'https://proxy.hackeryou.com',
+        dataType: 'json',
+        method:'GET',
+        data: {
+            reqUrl: 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+            params: {
+                key: papp.googleApiKey,
+                input: searchString,
+                types: 'geocode',
+                language: 'en',
+                components: 'country:us|country:ca',
+            },
+            xmlToJSON: false
+        }
+    });
+    $.when(response)
+    .done(function(responseInfo) {
+        papp.displayAutoCompleteResults(responseInfo.predictions);
+    })
+    .fail(function(error) {
+        console.error('ERROR: ', error);
+    });
+};
+
+papp.searchField = $('#searchField');
+papp.userSearchInputResult;
+
+// ================================================AUTOCOMPLETE FUNCTION=============
+
+papp.displayAutoCompleteResults = (results) => {
+
+    const autocompleteItemClass = 'autocompleteItem';
+    const autocompleteList = [];
+    
+    if(results.length > 0) {
+        results.forEach(function(result) {
+            autocompleteList.push({ label: result.description, value: result.place_id });
+        });
+
+        papp.searchField.autocomplete({
+            minLength:3,
+            source: autocompleteList,
+            autoFocus:true,
+            select: function(event, ui) {
+                event.preventDefault();
+                $(this).val(ui.item.label);
+                papp.userSearchInputResult = ui.item.value;
+                console.log(papp.userSearchInputResult);
+            },
+            messages: {
+                noResults: '',
+                results: function() {}
+            }
+        });
+    }
+};
+
+papp.placeToPos = function(placeId) {
+
+    const results = $.ajax({
+        url: 'https://maps.googleapis.com/maps/api/geocode/json',
+        dataType: 'json',
+        method: 'GET',
+        data: {
+            key: papp.googleApiKey,
+            place_id: placeId
+        }
+    });
+    $.when(results)
+    .done(function (result){
+        papp.userLocation = result.results[0].geometry.location;
+        papp.reverseGeolocation(papp.userLocation);
+        console.log("this one works!!", papp.userLocation);
+        papp.map.setCenter(papp.userLocation);
+        papp.map.setZoom(16);
+    });
+}
+
 papp.reverseGeolocation = function(pos) {
+
     $.ajax({
         url: 'https://maps.googleapis.com/maps/api/geocode/json',
         dataType: 'json',
         method: 'GET',
         data: {
             key: papp.googleApiKey,
-            // latlng: pos.lat + ',' + pos.lng
-            latlng: 43.6448203 + ',' + -79.3978765
+            latlng: pos.lat + ',' + pos.lng
         }
     }).then(function(addressResult){
-        
+        papp.getAddress(addressResult);
+    });
+}
+
+papp.getAddress = function(addressResult){
         if (addressResult.status !== "OK") {
             console.log("no results");
         } else {
-            console.log(addressResult);
+            // console.log(addressResult);
             var address = addressResult.results[0].address_components;
             var postalCodeObject = address.filter(function(component){
                 return component.types[0] === "postal_code";
@@ -170,7 +258,7 @@ papp.reverseGeolocation = function(pos) {
             var province = provinceObject[0].long_name;
             var newCity = city + ', ' + province;
             var useCity = 1;
-            console.log(newCity);
+            // console.log(newCity);
         }
 
         if (useCity === 1) {
@@ -178,8 +266,7 @@ papp.reverseGeolocation = function(pos) {
         } else {
             papp.getShelters(postalCode);
         }
-    });
-}
+};
 
 papp.getShelters = function(location) {
     $.ajax({
@@ -194,7 +281,7 @@ papp.getShelters = function(location) {
         }
     }).then(function(petfinderInfo){
         papp.petData = petfinderInfo.petfinder.pets.pet;
-        console.log(papp.petData);
+        // console.log(papp.petData);
         let shelterIdArray =[];
         for (var i=0; i < papp.petData.length; i++) {
         shelterIdArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
@@ -209,7 +296,6 @@ papp.getSheltersGeoCode = function(shelterAddresses) {
 }
 
 papp.getSheltersAddresses = function(shelterIds) {
-
 
 }
 
@@ -229,11 +315,34 @@ papp.events = function() {
             papp.displayPetInfo(15);
         }
     });
+
+    $('#searchForm').on('submit', function(event) {
+        event.preventDefault();
+
+        console.log('form submitted')
+        if(papp.userSearchInputResult !== undefined) {
+            papp.placeToPos(papp.userSearchInputResult);
+        }
+
+        $('.searchOverlay').addClass('searchOverlayTop');
+    });
+
+    papp.searchField.on('input', function(event) {
+        papp.searchFor($(this).val());
+    });
+
+    $('#autolocate').on('click', function (event){
+        event.preventDefault;
+        papp.locateUser();
+    })
 };
 
 papp.init = function(){
+
+    papp.searchFor();
     papp.initMap();
     papp.events();
+
 }
 
 $(function(){
