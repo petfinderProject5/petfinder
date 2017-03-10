@@ -2,7 +2,7 @@ var papp = {};
 
 papp.map;
 
-papp.googleApiKey = 'AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk';
+papp.googleApiKey = 'AIzaSyAIE6FNON09T5VbnCh_HfoADsz1prORR68';
 
 papp.petApiKey = '5643b4e4140ed1e99bc21e6bbbfb3fd6';
 
@@ -19,6 +19,8 @@ papp.elements = {
 };
 
 papp.petData;
+papp.markers=[];
+papp.selectedShelterInfo = [];
 
 papp.displayPetMedia = function(media) {
     papp.elements.$petGallery.empty();
@@ -86,7 +88,7 @@ papp.initMap = function() {
         zoom: 4
     });
 
-    papp.infoWindow = new google.maps.InfoWindow({map: papp.map});
+    papp.infoWindow = new google.maps.InfoWindow({map: null});
     // Try HTML5 geolocation.
 }
 
@@ -98,8 +100,8 @@ papp.locateUser = function () {
                 lng: position.coords.longitude
             };
 
-            papp.infoWindow.setPosition(pos);
-            papp.infoWindow.setContent('Location found.');
+            // papp.infoWindow.setPosition(pos);
+            // papp.infoWindow.setContent('Location found.');
             papp.map.setCenter(pos);
             papp.map.setZoom(16);
             papp.generateMapMarker(pos);
@@ -124,23 +126,28 @@ papp.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
 }
 
 papp.generateMapMarker = function(places) {
-    console.log('map markers working', places);
-    const markers = [];
-    let place ="";
-    let i = 0;
-    if (places.length === 0) {
-        markers[0] = new google.maps.Marker({
-            map: papp.map,
-            position: places
+    const marker = new google.maps.Marker({
+        map: papp.map,
+        position: places
+    });
+    
+
+    return marker;
+}
+
+papp.assignInfoWindow = function(marker, contentInfo) {
+    google.maps.event.addListener(marker, 'click', function() {
+        const content= `<div class="infoBox"><h3>${contentInfo.name}</h3> <br> <button class="viewDetails" value=${contentInfo.shelterId}>View Birds</button></div>`;
+        papp.infoWindow.setContent(content);
+        papp.infoWindow.open(papp.map, this);
+        $('.viewDetails').on('click', function(){
+            papp.selectedShelterInfo = papp.petData.filter(function(pet){
+                return pet.shelterId.$t === contentInfo.shelterId;
+            });
+            //replace this console.log to call to function to display bird data
+            console.log(papp.selectedShelterInfo);
         });
-    } else{
-     for(let x = 0; x < places.length; x++) {
-         markers[x] = new google.maps.Marker({
-             map: papp.map,
-             position: places[x]
-         });
-     } 
- }
+    });
 }
 
 //-------------------------------------------PLACES API SEARCH ----------------------------
@@ -191,10 +198,8 @@ papp.displayAutoCompleteResults = (results) => {
             source: autocompleteList,
             select: function(event, ui) {
                 event.preventDefault();
-                console.log('Clicked!');
                 $(this).val(ui.item.label);
                 papp.userSearchInputResult = ui.item.value;
-                // console.log(papp.userSearchInputResult);
             },
             focus: function(event, ui) {
                 event.preventDefault(); // or return false;
@@ -223,7 +228,6 @@ papp.placeToPos = function(placeId) {
     .done(function (result) {
         papp.userLocation = result.results[0].geometry.location;
         papp.reverseGeolocation(papp.userLocation);
-        console.log("this one works!!", papp.userLocation);
         papp.map.setCenter(papp.userLocation);
         papp.map.setZoom(16);
         papp.getAddress(result);
@@ -274,6 +278,7 @@ papp.getAddress = function(addressResult) {
         } else {
             papp.getShelters(postalCode);
         }
+
     };
 
     papp.getShelters = function(location) {
@@ -289,43 +294,76 @@ papp.getAddress = function(addressResult) {
          }
      }).then(function(petfinderInfo){
          papp.petData = petfinderInfo.petfinder.pets.pet;
-         // console.log(papp.petData);
          let shelterAddressesArray =[];
+         let shelterIdsArray =[];
          for (var i=0; i < papp.petData.length; i++) {
             shelterAddressesArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
+            shelterIdsArray.push(papp.petData[i].shelterId.$t);
         }
         shelterAddressesArray = _.uniq(shelterAddressesArray);
-        // console.log(shelterAddressesArray);
-        papp.getSheltersGeoCode(shelterAddressesArray);
+        shelterIdsArray = _.uniq(shelterIdsArray);
+        papp.getShelterInfo(shelterAddressesArray, shelterIdsArray);
     });
 }
 
-papp.getSheltersGeoCode = function(shelterAddresses) {
-    const shelterGeo = [];
-    for (var i=0; i < shelterAddresses.length; i++) {
-        papp.geoShelterGet = $.ajax({
+papp.getShelterInfo = function(shelterAddressesArray, shelterIdsArray) {
+    const shelterInfoArray = shelterIdsArray.map(function(shelter){
+        return $.ajax({
+            url: 'https://api.petfinder.com/shelter.get',
+            dataType: 'jsonp',
+            method: 'GET',
+            data: {
+                key: papp.petApiKey,
+                format: 'json',
+                id: shelter
+            }
+        });
+    });
+    $.when.apply(null, shelterInfoArray)
+        .then(function() {
+            let shelters = Array.prototype.slice.call(arguments);
+            shelters = shelters.map(function(shelter) {
+                return {name: shelter[0].petfinder.shelter.name.$t, shelterId: shelter[0].petfinder.shelter.id.$t};
+            });
+            papp.getSheltersGeoCode(shelterAddressesArray, shelters);
+        });
+}
+
+papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
+    const shelterGeoArray = shelterAddresses.map(function(shelter){
+        return $.ajax({
             url:'https://maps.googleapis.com/maps/api/geocode/json',
             dataType: 'json',
             method: 'GET',
             data: {
                 key: papp.googleApiKey,
-                address: shelterAddresses[i]
+                address: shelter
             }
         })
-        $.when(papp.geoShelterGet).done(function(shelterLatLng){
-            console.log(shelterLatLng.results[0].geometry.location);
-            shelterGeo.push(shelterLatLng.results[0].geometry.location);
-            // console.log(shelterGeo.length, 'geoShelter');
-            if(i === shelterAddresses.length){
-                papp.generateMapMarker(shelterGeo);
+    });
+    $.when.apply(null, shelterGeoArray)
+        .then(function() {
+            let sheltersGeo = Array.prototype.slice.call(arguments);
+            sheltersGeo = sheltersGeo.map(function(shelter) {
+                return shelter[0].results[0].geometry.location;
+            });
+            for (var x =0; x < sheltersGeo.length; x++){
+                papp.markers.push(papp.generateMapMarker(sheltersGeo[x]));
             }
+            for (var y=0; y < shelterNames.length; y++) {
+                papp.assignInfoWindow(papp.markers[y], shelterNames[y]);
+            }
+            papp.setMapBounds(papp.markers);
         });
-
-    }
 }
 
-papp.getSheltersAddresses = function(shelterIds) {
+papp.setMapBounds = function(markers) {
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < markers.length; i++) {
+     bounds.extend(markers[i].getPosition());
+    }
 
+    papp.map.fitBounds(bounds);
 }
 
 papp.events = function() {
