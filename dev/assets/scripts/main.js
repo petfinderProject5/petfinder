@@ -189,12 +189,17 @@ papp.displayAutoCompleteResults = (results) => {
         papp.searchField.autocomplete({
             minLength:3,
             source: autocompleteList,
-            autoFocus:true,
             select: function(event, ui) {
                 event.preventDefault();
+                console.log('Clicked!');
                 $(this).val(ui.item.label);
                 papp.userSearchInputResult = ui.item.value;
-                console.log(papp.userSearchInputResult);
+                // console.log(papp.userSearchInputResult);
+            },
+            focus: function(event, ui) {
+                event.preventDefault(); // or return false;
+                $(this).val(ui.item.label);
+                papp.userSearchInputResult = ui.item.value;
             },
             messages: {
                 noResults: '',
@@ -215,12 +220,13 @@ papp.placeToPos = function(placeId) {
         }
     });
     $.when(results)
-    .done(function (result){
+    .done(function (result) {
         papp.userLocation = result.results[0].geometry.location;
         papp.reverseGeolocation(papp.userLocation);
         console.log("this one works!!", papp.userLocation);
         papp.map.setCenter(papp.userLocation);
         papp.map.setZoom(16);
+        papp.getAddress(result);
     });
 }
 
@@ -234,12 +240,12 @@ papp.reverseGeolocation = function(pos) {
             key: papp.googleApiKey,
             latlng: pos.lat + ',' + pos.lng
         }
-    }).then(function(addressResult){
+    }).then(function(addressResult) {
         papp.getAddress(addressResult);
     });
 }
 
-papp.getAddress = function(addressResult){
+papp.getAddress = function(addressResult) {
     if (addressResult.status !== "OK") {
         console.log("no results");
     } else {
@@ -283,13 +289,13 @@ papp.getAddress = function(addressResult){
          }
      }).then(function(petfinderInfo){
          papp.petData = petfinderInfo.petfinder.pets.pet;
-         console.log(papp.petData);
+         // console.log(papp.petData);
          let shelterAddressesArray =[];
          for (var i=0; i < papp.petData.length; i++) {
             shelterAddressesArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
         }
         shelterAddressesArray = _.uniq(shelterAddressesArray);
-        console.log(shelterAddressesArray);
+        // console.log(shelterAddressesArray);
         papp.getSheltersGeoCode(shelterAddressesArray);
     });
 }
@@ -309,7 +315,7 @@ papp.getSheltersGeoCode = function(shelterAddresses) {
         $.when(papp.geoShelterGet).done(function(shelterLatLng){
             console.log(shelterLatLng.results[0].geometry.location);
             shelterGeo.push(shelterLatLng.results[0].geometry.location);
-            console.log(shelterGeo.length, 'geoShelter');
+            // console.log(shelterGeo.length, 'geoShelter');
             if(i === shelterAddresses.length){
                 papp.generateMapMarker(shelterGeo);
             }
