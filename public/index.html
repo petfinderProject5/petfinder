@@ -5,6 +5,7 @@
     <title>Petfinder</title>
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Open+Sans" rel="stylesheet">
 </head>
 <body>
 
@@ -12,29 +13,37 @@
     	<h1> Birdfinder </h1>
     	<form id="searchForm">
     		<input type="text" id="searchField" placeholder="Enter your city">
-            <button id="submitButton" type="submit">Go</button>
+            <button id="submitButton" type="submit">Submit</button>
             <button id="autolocate">Auto locate</button>
     	</form>
     </div>
 
     <div id="map"></div>
+	<div class="wrapper">
+		<div class="petFocus">
+		    <button value="pet1">pet 1</button>
+		    <button value="pet2">pet 2</button>
+		    <button value="pet3">pet 3</button>
+		    <button value="pet4">pet 4</button>
 
-    <button value="pet1">pet 1</button>
-    <button value="pet2">pet 2</button>
-    <button value="pet3">pet 3</button>
-    <button value="pet4">pet 4</button>
-
-    <div id="petDetails">
-        <div id="petGallery"></div>
-        <div id="petInfo">
-            <div id="petName"></div>
-            <div id="petBreed"></div>
-            <div id="petGender"></div>
-            <div id="petAge"></div>
-            <div id="petDescription"></div>
-            <div id="petAddress"></div>
-        </div>
-    </div>
+		    <div id="petDetails">
+		        <div id="petGallery"></div>
+		        <div id="petInfo">
+		            <div id="petName"></div>
+		            <div id="petBreed"></div>
+		            <div id="petGender"></div>
+		            <div id="petAge"></div>
+		            <div id="petDescription"></div>
+		            <div id="petAddress"></div>
+		        </div>
+		    </div>
+		</div>
+		
+		<div class="petsDisplay">
+			
+		</div>
+	
+	</div>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
