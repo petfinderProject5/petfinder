@@ -2,7 +2,7 @@ var papp = {};
 
 papp.map;
 
-papp.googleApiKey = 'AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk';
+papp.googleApiKey = 'AIzaSyAIE6FNON09T5VbnCh_HfoADsz1prORR68';
 
 papp.petApiKey = '5643b4e4140ed1e99bc21e6bbbfb3fd6';
 
@@ -10,12 +10,12 @@ papp.elements = {
     $petDetails: $('#petDetails'),
     $petGallery: $('#petGallery'),
     $petInfo: $('#petInfo'),
-    $petName: $('#petName'),
-    $petBreed: $('#petBreed'),
-    $petGender: $('#petGender'),
-    $petAge: $('#petAge'),
-    $petDescription: $('#petDescription'),
-    $petAddress: $('#petAddress')
+    $petName: $('.petName'),
+    $petBreed: $('.petBreed'),
+    $petGender: $('.petGender'),
+    $petAge: $('.petAge'),
+    $petDescription: $('.petDescription'),
+    $petAddress: $('.petAddress')
 };
 
 papp.petData;
@@ -73,11 +73,11 @@ papp.displayPetInfo = function(petIndex) {
     if(papp.petData[petIndex].description.$t !== undefined) {
         description = papp.petData[petIndex].description.$t;
     }
-    papp.elements.$petName.html("Name: " + name);
-    papp.elements.$petGender.html("Gender: " + gender);
-    papp.elements.$petAge.html("Age: " + age);
-    papp.elements.$petDescription.html("About Me: " + description);
-    papp.elements.$petAddress.html("Shelter Adress: " + address);
+    papp.elements.$petName.html("<span>Name:</span> " + name);
+    papp.elements.$petGender.html("<span>Gender:</span> " + gender);
+    papp.elements.$petAge.html("<span>Age:</span> " + age);
+    papp.elements.$petDescription.html("<span>About Me:</span> " + description);
+    papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
 };
 
 papp.initMap = function() {

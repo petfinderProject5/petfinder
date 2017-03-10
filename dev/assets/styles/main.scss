@@ -1,8 +1,9 @@
 @import 'setup';
-@import 'carousel';
-@import 'petInfo';
-@import 'petsDisplay';
 @import 'variables';
+@import 'petContainer';
+@import 'carousel';
+@import 'petGallery';
+// @import 'petsDisplay';
 
 
 
@@ -18,9 +19,6 @@ html, body {
   color: goldenrod;
 }
 
-.wrapper {
-  max-width: 1170px;
-}
 
 h1 {
   font-family: $brandHeadline;
@@ -58,7 +56,6 @@ h1 {
 
 .wrapper{
   max-width: 1170px;
-  border: 1px solid black;
   margin: 0 auto;
 }
 
