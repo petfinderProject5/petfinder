@@ -1,5 +1,6 @@
 @import 'setup';
 @import 'carousel';
+@import '_petDisplay';
 
 
 html, body {
@@ -41,4 +42,11 @@ html, body {
   flex-direction: row;
   justify-content: space-between;
   height: 60px;
+}
+
+.wrapper{
+  // width: 80%;
+  max-width: 1170px;
+  border: 1px solid black;
+  margin: 0 auto;
 }

@@ -73,11 +73,11 @@ papp.displayPetInfo = function(petIndex) {
     if(papp.petData[petIndex].description.$t !== undefined) {
         description = papp.petData[petIndex].description.$t;
     }
-    papp.elements.$petName.html(name);
-    papp.elements.$petGender.html(gender);
-    papp.elements.$petAge.html(age);
-    papp.elements.$petDescription.html(description);
-    papp.elements.$petAddress.html(address);
+    papp.elements.$petName.html("Name: " + name);
+    papp.elements.$petGender.html("Gender: " + gender);
+    papp.elements.$petAge.html("Age: " + age);
+    papp.elements.$petDescription.html("About Me: " + description);
+    papp.elements.$petAddress.html("Shelter Adress: " + address);
 };
 
 papp.initMap = function() {

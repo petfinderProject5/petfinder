@@ -1,0 +1,25 @@
+.petDisplayContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.petGallery{
+    flex: 50%;
+    margin: 10px;
+    border: 1px solid red;
+}
+.petInfo{
+    flex: 50%;
+    margin: 10px;
+    border: 1px solid red;
+}
+
+.title{
+    font-size: 16px;
+    padding: 5px;
+    border: 1px solid black;
+}
+.description{
+    padding: 10px;
+    line-spacing: 5px;
+}
