@@ -24,9 +24,9 @@ gulp.task('styles', () => {
 
 gulp.task('javascript', () => {
     return gulp.src('./dev/assets/scripts/main.js')
-    .pipe(babel({
-        presets: ['es2015']
-    }))
+    // .pipe(babel({
+    //     presets: ['es2015']
+    // }))
     .pipe(gulp.dest('./public/assets/scripts/'))
     .pipe(reload({stream: true}));
 });

@@ -129,11 +129,38 @@ papp.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
                         'Error: Your browser doesn\'t support geolocation.');
 }
 
-papp.generateMapMarker = function(place) {
-    const marker = new google.maps.Marker({
-        map: papp.map,
-        position: place
-    });
+papp.generateMapMarker = function(places) {
+    console.log('map markers working', places);
+    const markers = [];
+    // console.log(places.length);
+    let place ="";
+    let i = 0;
+
+    console.log(place.length);
+    if (places.length === 0) {
+        markers[0] = new google.maps.Marker({
+            map: papp.map,
+            position: places
+        });
+    } else{
+       for(let x = 0; x < places.length; x++) {
+        
+           console.log(places, "place");
+           markers[x] = new google.maps.Marker({
+               map: papp.map,
+               position: places[x]
+           });
+       } 
+    }
+    
+    // var bounds = new google.maps.LatLngBounds();
+    // console.log(bounds);
+    // for (var x = 0; x < markers.length; x++) {
+    // console.log('in the loop now');
+    //  bounds.extend(markers[x].getPosition());
+    //  console.log(markers[x]);
+    // }
+    // papp.map.setCenter(bounds.getCenter());    
 }
 
 papp.reverseGeolocation = function(pos) {
@@ -182,29 +209,62 @@ papp.reverseGeolocation = function(pos) {
 }
 
 papp.getShelters = function(location) {
-    $.ajax({
-        url: 'https://api.petfinder.com/pet.find',
-        dataType: 'jsonp',
-        method: 'GET',
-        data: {
-            key: papp.petApiKey,
-            animal: 'bird',
-            format: 'json',
-            location: location
-        }
-    }).then(function(petfinderInfo){
-        papp.petData = petfinderInfo.petfinder.pets.pet;
-        console.log(papp.petData);
-        let shelterIdArray =[];
-        for (var i=0; i < papp.petData.length; i++) {
-        shelterIdArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
-        }
-        shelterIdArray = _.uniq(shelterIdArray);
-        console.log(shelterIdArray);
-    });
+   $.ajax({
+       url: 'https://api.petfinder.com/pet.find',
+       dataType: 'jsonp',
+       method: 'GET',
+       data: {
+           key: papp.petApiKey,
+           animal: 'bird',
+           format: 'json',
+           location: location
+       }
+   }).then(function(petfinderInfo){
+       papp.petData = petfinderInfo.petfinder.pets.pet;
+       console.log(papp.petData);
+       let shelterAddressesArray =[];
+       for (var i=0; i < papp.petData.length; i++) {
+       shelterAddressesArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
+       }
+       shelterAddressesArray = _.uniq(shelterAddressesArray);
+       console.log(shelterAddressesArray);
+       papp.getSheltersGeoCode(shelterAddressesArray);
+   });
 }
 
 papp.getSheltersGeoCode = function(shelterAddresses) {
+    const shelterGeo = [];
+    for (var i=0; i < shelterAddresses.length; i++) {
+        papp.geoShelterGet = $.ajax({
+            url:'https://maps.googleapis.com/maps/api/geocode/json',
+            dataType: 'json',
+            method: 'GET',
+            data: {
+                key: papp.googleApiKey,
+                address: shelterAddresses[i]
+            }
+        })
+        $.when(papp.geoShelterGet).done(function(shelterLatLng){
+            console.log(shelterLatLng.results[0].geometry.location);
+            shelterGeo.push(shelterLatLng.results[0].geometry.location);
+            console.log(shelterGeo.length, 'geoShelter');
+            if(i === shelterAddresses.length){
+                papp.generateMapMarker(shelterGeo);
+            }
+
+            // console.log(shelterGeo[i]);
+            // console.log(i);
+            // let shelterGeo = "";\
+
+            // shelterGeo = shelterLatLng.results[0].geometry.location;
+        });
+
+    }
+        
+       
+    //     if(i === shelterAddresses.length){
+    //     console.log(shelterGeo.length);
+    // }
 
 }
 
