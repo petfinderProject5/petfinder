@@ -196,9 +196,13 @@ papp.displayAutoCompleteResults = (results) => {
         papp.searchField.autocomplete({
             minLength:3,
             source: autocompleteList,
-            autoFocus:true,
             select: function(event, ui) {
                 event.preventDefault();
+                $(this).val(ui.item.label);
+                papp.userSearchInputResult = ui.item.value;
+            },
+            focus: function(event, ui) {
+                event.preventDefault(); // or return false;
                 $(this).val(ui.item.label);
                 papp.userSearchInputResult = ui.item.value;
             },
@@ -221,11 +225,12 @@ papp.placeToPos = function(placeId) {
         }
     });
     $.when(results)
-    .done(function (result){
+    .done(function (result) {
         papp.userLocation = result.results[0].geometry.location;
         papp.reverseGeolocation(papp.userLocation);
         papp.map.setCenter(papp.userLocation);
         papp.map.setZoom(16);
+        papp.getAddress(result);
     });
 }
 
@@ -239,12 +244,12 @@ papp.reverseGeolocation = function(pos) {
             key: papp.googleApiKey,
             latlng: pos.lat + ',' + pos.lng
         }
-    }).then(function(addressResult){
+    }).then(function(addressResult) {
         papp.getAddress(addressResult);
     });
 }
 
-papp.getAddress = function(addressResult){
+papp.getAddress = function(addressResult) {
     if (addressResult.status !== "OK") {
         console.log("no results");
     } else {
@@ -320,9 +325,8 @@ papp.getShelterInfo = function(shelterAddressesArray, shelterIdsArray) {
             shelters = shelters.map(function(shelter) {
                 return {name: shelter[0].petfinder.shelter.name.$t, shelterId: shelter[0].petfinder.shelter.id.$t};
             });
-            papp.getSheltersGeoCode(shelterAddressesArray,shelters);
+            papp.getSheltersGeoCode(shelterAddressesArray, shelters);
         });
-
 }
 
 papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
@@ -346,7 +350,7 @@ papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
             for (var x =0; x < sheltersGeo.length; x++){
                 papp.markers.push(papp.generateMapMarker(sheltersGeo[x]));
             }
-            for (var y=0; y < papp.markers.length; y++) {
+            for (var y=0; y < shelterNames.length; y++) {
                 papp.assignInfoWindow(papp.markers[y], shelterNames[y]);
             }
             papp.setMapBounds(papp.markers);
