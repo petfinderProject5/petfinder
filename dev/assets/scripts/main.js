@@ -23,8 +23,8 @@ papp.petData;
 papp.displayPetMedia = function(media) {
     papp.elements.$petGallery.empty();
     const $imageCarousel = $('<div>')
-        .addClass('mainCarousel')
-        .appendTo(papp.elements.$petGallery);
+    .addClass('mainCarousel')
+    .appendTo(papp.elements.$petGallery);
 
     if(media.photos !== undefined) {
         media.photos.photo.forEach(function(photo){
@@ -33,17 +33,17 @@ papp.displayPetMedia = function(media) {
 
                 // Build carousel and it's items
                 $('<img/>')
-                    .addClass('petImage carouselItem')
-                    .attr('src', photo.$t)
-                    .appendTo($imageCarousel);
+                .addClass('petImage carouselItem')
+                .attr('src', photo.$t)
+                .appendTo($imageCarousel);
             }
         }); 
     }
     else {
         $('<img/>')
-            .addClass('petImage carouselItem')
-            .attr('src', 'assets/images/no_images_found.jpg')
-            .appendTo($imageCarousel);
+        .addClass('petImage carouselItem')
+        .attr('src', 'assets/images/no_images_found.jpg')
+        .appendTo($imageCarousel);
     }
 
     $('.mainCarousel').flickity({
@@ -56,7 +56,6 @@ papp.displayPetMedia = function(media) {
 };
 
 papp.displayPetInfo = function(petIndex) {
-
     const name = papp.petData[petIndex].name.$t;
     const age = papp.petData[petIndex].age.$t;
     const gender = papp.petData[petIndex].sex.$t;
@@ -74,16 +73,11 @@ papp.displayPetInfo = function(petIndex) {
     if(papp.petData[petIndex].description.$t !== undefined) {
         description = papp.petData[petIndex].description.$t;
     }
-
     papp.elements.$petName.html(name);
     papp.elements.$petGender.html(gender);
     papp.elements.$petAge.html(age);
     papp.elements.$petDescription.html(description);
     papp.elements.$petAddress.html(address);
-
-    // papp.elements.$petDetails
-    // papp.elements.$petInfo
-    // papp.elements.$petBreed
 };
 
 papp.initMap = function() {
@@ -93,26 +87,24 @@ papp.initMap = function() {
     });
 
     papp.infoWindow = new google.maps.InfoWindow({map: papp.map});
-
     // Try HTML5 geolocation.
 }
 
 papp.locateUser = function () {
     if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-        var pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
 
-        papp.infoWindow.setPosition(pos);
-        papp.infoWindow.setContent('Location found.');
-        papp.map.setCenter(pos);
-        papp.map.setZoom(16);
-        papp.generateMapMarker(pos);
-        // console.log(pos);
-        papp.reverseGeolocation(pos);
-    }, 
+            papp.infoWindow.setPosition(pos);
+            papp.infoWindow.setContent('Location found.');
+            papp.map.setCenter(pos);
+            papp.map.setZoom(16);
+            papp.generateMapMarker(pos);
+            papp.reverseGeolocation(pos);
+        }, 
     function() {
         papp.handleLocationError(true, papp.infoWindow, papp.map.getCenter());
     });
@@ -127,15 +119,28 @@ papp.locateUser = function () {
 papp.handleLocationError = function(browserHasGeolocation, infoWindow, pos) {
     papp.infoWindow.setPosition(pos);
     papp.infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
+        'Error: The Geolocation service failed.' :
+        'Error: Your browser doesn\'t support geolocation.');
 }
 
-papp.generateMapMarker = function(place) {
-    const marker = new google.maps.Marker({
-        map: papp.map,
-        position: place
-    });
+papp.generateMapMarker = function(places) {
+    console.log('map markers working', places);
+    const markers = [];
+    let place ="";
+    let i = 0;
+    if (places.length === 0) {
+        markers[0] = new google.maps.Marker({
+            map: papp.map,
+            position: places
+        });
+    } else{
+     for(let x = 0; x < places.length; x++) {
+         markers[x] = new google.maps.Marker({
+             map: papp.map,
+             position: places[x]
+         });
+     } 
+ }
 }
 
 //-------------------------------------------PLACES API SEARCH ----------------------------
@@ -200,7 +205,6 @@ papp.displayAutoCompleteResults = (results) => {
 };
 
 papp.placeToPos = function(placeId) {
-
     const results = $.ajax({
         url: 'https://maps.googleapis.com/maps/api/geocode/json',
         dataType: 'json',
@@ -236,10 +240,9 @@ papp.reverseGeolocation = function(pos) {
 }
 
 papp.getAddress = function(addressResult){
-        if (addressResult.status !== "OK") {
-            console.log("no results");
-        } else {
-            // console.log(addressResult);
+    if (addressResult.status !== "OK") {
+        console.log("no results");
+    } else {
             var address = addressResult.results[0].address_components;
             var postalCodeObject = address.filter(function(component){
                 return component.types[0] === "postal_code";
@@ -258,7 +261,6 @@ papp.getAddress = function(addressResult){
             var province = provinceObject[0].long_name;
             var newCity = city + ', ' + province;
             var useCity = 1;
-            // console.log(newCity);
         }
 
         if (useCity === 1) {
@@ -266,33 +268,54 @@ papp.getAddress = function(addressResult){
         } else {
             papp.getShelters(postalCode);
         }
-};
+    };
 
-papp.getShelters = function(location) {
-    $.ajax({
-        url: 'https://api.petfinder.com/pet.find',
-        dataType: 'jsonp',
-        method: 'GET',
-        data: {
-            key: papp.petApiKey,
-            animal: 'bird',
-            format: 'json',
-            location: location
+    papp.getShelters = function(location) {
+        $.ajax({
+         url: 'https://api.petfinder.com/pet.find',
+         dataType: 'jsonp',
+         method: 'GET',
+         data: {
+             key: papp.petApiKey,
+             animal: 'bird',
+             format: 'json',
+             location: location
+         }
+     }).then(function(petfinderInfo){
+         papp.petData = petfinderInfo.petfinder.pets.pet;
+         console.log(papp.petData);
+         let shelterAddressesArray =[];
+         for (var i=0; i < papp.petData.length; i++) {
+            shelterAddressesArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
         }
-    }).then(function(petfinderInfo){
-        papp.petData = petfinderInfo.petfinder.pets.pet;
-        // console.log(papp.petData);
-        let shelterIdArray =[];
-        for (var i=0; i < papp.petData.length; i++) {
-        shelterIdArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
-        }
-        shelterIdArray = _.uniq(shelterIdArray);
-        console.log(shelterIdArray);
+        shelterAddressesArray = _.uniq(shelterAddressesArray);
+        console.log(shelterAddressesArray);
+        papp.getSheltersGeoCode(shelterAddressesArray);
     });
 }
 
 papp.getSheltersGeoCode = function(shelterAddresses) {
+    const shelterGeo = [];
+    for (var i=0; i < shelterAddresses.length; i++) {
+        papp.geoShelterGet = $.ajax({
+            url:'https://maps.googleapis.com/maps/api/geocode/json',
+            dataType: 'json',
+            method: 'GET',
+            data: {
+                key: papp.googleApiKey,
+                address: shelterAddresses[i]
+            }
+        })
+        $.when(papp.geoShelterGet).done(function(shelterLatLng){
+            console.log(shelterLatLng.results[0].geometry.location);
+            shelterGeo.push(shelterLatLng.results[0].geometry.location);
+            console.log(shelterGeo.length, 'geoShelter');
+            if(i === shelterAddresses.length){
+                papp.generateMapMarker(shelterGeo);
+            }
+        });
 
+    }
 }
 
 papp.getSheltersAddresses = function(shelterIds) {
@@ -338,7 +361,6 @@ papp.events = function() {
 };
 
 papp.init = function(){
-
     papp.searchFor();
     papp.initMap();
     papp.events();
