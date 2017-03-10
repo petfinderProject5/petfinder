@@ -6,6 +6,9 @@
 // @import 'petsDisplay';
 
 
+$green:#3E6858;
+$grey:#C1C1C1;
+$black:#2B2B2B;
 
 html, body {
   height: 100%;
@@ -52,11 +55,26 @@ h1 {
   justify-content: space-between;
   height: 60px;
   background-color: $brandGreen;
+
 }
 
+//Style map view birds button
+button.viewDetails {
+	background: $green;
+	color:white;
+	border:none;
+	padding:5px 10px;
+	border-radius: 3px;
+}
 .wrapper{
   max-width: 1170px;
   margin: 0 auto;
+}
+
+.infoBox {
+	display:flex;
+	align-items:center;
+	flex-direction:column;
 }
 
 .ui-autocomplete {
