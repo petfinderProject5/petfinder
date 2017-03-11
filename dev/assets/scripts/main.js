@@ -301,17 +301,17 @@ papp.getAddress = function(addressResult) {
 
 };
 
-    papp.getShelters = function(location) {
-        $.ajax({
-         url: 'https://api.petfinder.com/pet.find',
-         dataType: 'jsonp',
-         method: 'GET',
-         data: {
-             key: papp.petApiKey,
-             animal: 'bird',
-             format: 'json',
-             location: location
-         }
+papp.getShelters = function(location) {
+    $.ajax({
+        url: 'https://api.petfinder.com/pet.find',
+        dataType: 'jsonp',
+        method: 'GET',
+        data: {
+            key: papp.petApiKey,
+            animal: 'bird',
+            format: 'json',
+            location: location
+        }
      }).then(function(petfinderInfo){
          papp.petData = petfinderInfo.petfinder.pets.pet;
          let shelterAddressesArray =[];
