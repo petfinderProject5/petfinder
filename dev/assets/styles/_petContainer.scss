@@ -1,0 +1,52 @@
+.petDisplayContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.petGallery{
+    flex: 50%;
+    margin: 10px;
+    // padding-top: 100px;
+}
+.petInfo{
+    flex: 50%;
+    margin: 10px;
+}
+.resultTitle{
+    font-size: 50px;
+    font-family: $brandHeadline;
+    text-align: center;
+}
+
+.title{
+    font-size: 16px;
+    padding: 5px;
+    font-family: $brandBody;
+    // text-transform: uppercase;
+}
+.resultsWrapper{
+    width: 200px;
+    margin: 0 auto;
+}
+.description{
+    padding: 5px;
+    line-height: 35px;
+    font-size: 16px;
+    font-family: $brandBody;
+    color: black;
+}
+
+.petName span, .petGender span, .petAge span, .petDescription span, .petAddress span{
+    font-weight: bold;
+    font-size: 20px;
+    margin-right: 5px;
+    color: $brandGreen;
+    font-family: $brandBody;
+    text-transform: uppercase;
+    // margin-right: 20px;
+}
+.petAge{
+}
+.petDescription span{
+    display: block;
+}

@@ -10,12 +10,12 @@ papp.elements = {
     $petDetails: $('#petDetails'),
     $petGallery: $('#petGallery'),
     $petInfo: $('#petInfo'),
-    $petName: $('#petName'),
-    $petBreed: $('#petBreed'),
-    $petGender: $('#petGender'),
-    $petAge: $('#petAge'),
-    $petDescription: $('#petDescription'),
-    $petAddress: $('#petAddress')
+    $petName: $('.petName'),
+    $petBreed: $('.petBreed'),
+    $petGender: $('.petGender'),
+    $petAge: $('.petAge'),
+    $petDescription: $('.petDescription'),
+    $petAddress: $('.petAddress')
 };
 
 papp.petData;
@@ -61,15 +61,15 @@ papp.displayPetMedia = function(media) {
 };
 
 papp.displayPetInfo = function(petIndex) {
-    const name = papp.petData[petIndex].name.$t;
-    const age = papp.petData[petIndex].age.$t;
-    const gender = papp.petData[petIndex].sex.$t;
-    const media = papp.petData[petIndex].media;
-    const streetAddress = papp.petData[petIndex].contact.address1.$t;
-    const city = papp.petData[petIndex].contact.city.$t;
-    const state = papp.petData[petIndex].contact.state.$t;
-    const zip = papp.petData[petIndex].contact.zip.$t;
-    const email = papp.petData[petIndex].contact.email.$t;
+    const name = papp.selectedShelterInfo[petIndex].name.$t;
+    const age = papp.selectedShelterInfo[petIndex].age.$t;
+    const gender = papp.selectedShelterInfo[petIndex].sex.$t;
+    const media = papp.selectedShelterInfo[petIndex].media;
+    const streetAddress = papp.selectedShelterInfo[petIndex].contact.address1.$t;
+    const city = papp.selectedShelterInfo[petIndex].contact.city.$t;
+    const state = papp.selectedShelterInfo[petIndex].contact.state.$t;
+    const zip = papp.selectedShelterInfo[petIndex].contact.zip.$t;
+    const email = papp.selectedShelterInfo[petIndex].contact.email.$t;
     const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${email}`;
 
     papp.displayPetMedia(media);
@@ -78,11 +78,11 @@ papp.displayPetInfo = function(petIndex) {
     if(papp.petData[petIndex].description.$t !== undefined) {
         description = papp.petData[petIndex].description.$t;
     }
-    papp.elements.$petName.html(name);
-    papp.elements.$petGender.html(gender);
-    papp.elements.$petAge.html(age);
-    papp.elements.$petDescription.html(description);
-    papp.elements.$petAddress.html(address);
+    papp.elements.$petName.html("<span>Name:</span> " + name);
+    papp.elements.$petGender.html("<span>Gender:</span> " + gender);
+    papp.elements.$petAge.html("<span>Age:</span> " + age);
+    papp.elements.$petDescription.html("<span>About Me:</span> " + description);
+    papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
 };
 
 papp.initMap = function() {
@@ -137,6 +137,36 @@ papp.generateMapMarker = function(places) {
 
     return marker;
 }
+papp.displayPetCard = function(petInfo) {
+   $('<div>')
+   .addClass('petCard')
+   .appendTo('.petsDisplay');
+    if(petInfo.media.photos !== undefined) {
+    // Build carousel and it's items
+    $('<img/>')
+    .addClass('cardImg')
+    .attr('src', petInfo.media.photos.photo[2].$t)
+    .prependTo('.petCard');
+    }
+    else {
+        $('<img/>')
+        .addClass('cardImg')
+        .attr('src', 'assets/images/no_images_found.jpg')
+        .prependTo('.petCard');
+    }
+    $('<div>')
+    .addClass('cardDetail')
+    .appendTo('.petCard');
+    $('<div>')
+    .addClass('cardName')
+    .appendTo('.cardDetail');
+    $('<div>')
+    .addClass('cardBreed')
+    .appendTo('.cardDetail');
+     $('.cardName').text(petInfo.name.$t);
+    $('.cardBreed').text(petInfo.breeds.breed.$t);
+
+}
 
 papp.generateUserMarker = function(pos) {
     papp.userMarker = papp.generateMapMarker(pos);
@@ -154,6 +184,14 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             });
             //replace this console.log to call to function to display bird data
             console.log(papp.selectedShelterInfo);
+            $('.resultTitle').text(contentInfo.name);
+            $('html, body').animate({
+         scrollTop: $(".resultTitle").offset().top
+     }, 2000);
+            papp.displayPetCard(papp.selectedShelterInfo[0]);
+            // for (i=0; i < papp.selectedShelterInfo.length; i++) {
+            //     papp.displayPetCard(papp.selectedShelterInfo[i]);
+            // }
         });
     });
 }
