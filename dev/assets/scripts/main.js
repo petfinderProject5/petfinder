@@ -19,8 +19,11 @@ papp.elements = {
 };
 
 papp.petData;
-papp.markers=[];
+papp.markers = [];
+papp.userMarker;
 papp.selectedShelterInfo = [];
+papp.userMarkerImage = 'assets/images/user_marker.png';
+papp.birdMarkerImage = 'assets/images/bird_marker.png';
 
 papp.displayPetMedia = function(media) {
     papp.elements.$petGallery.empty();
@@ -104,7 +107,7 @@ papp.locateUser = function () {
             // papp.infoWindow.setContent('Location found.');
             papp.map.setCenter(pos);
             papp.map.setZoom(16);
-            papp.generateMapMarker(pos);
+            papp.generateUserMapMarker(pos);
             papp.reverseGeolocation(pos);
         }, 
     function() {
@@ -133,6 +136,11 @@ papp.generateMapMarker = function(places) {
     
 
     return marker;
+}
+
+papp.generateUserMarker = function(pos) {
+    papp.userMarker = papp.generateMapMarker(pos);
+    papp.userMarker.setIcon(papp.userMarkerImage);
 }
 
 papp.assignInfoWindow = function(marker, contentInfo) {
@@ -169,9 +177,15 @@ papp.searchFor = function(searchString) {
             xmlToJSON: false
         }
     });
+
     $.when(response)
     .done(function(responseInfo) {
-        papp.displayAutoCompleteResults(responseInfo.predictions);
+        if(responseInfo.status === "OK") {
+            papp.displayAutoCompleteResults(responseInfo.predictions);
+        }
+        else {
+            console.log(responseInfo);
+        }
     })
     .fail(function(error) {
         console.error('ERROR: ', error);
@@ -184,7 +198,6 @@ papp.userSearchInputResult;
 // ================================================AUTOCOMPLETE FUNCTION=============
 
 papp.displayAutoCompleteResults = (results) => {
-
     const autocompleteItemClass = 'autocompleteItem';
     const autocompleteList = [];
     
@@ -228,6 +241,7 @@ papp.placeToPos = function(placeId) {
     .done(function (result) {
         papp.userLocation = result.results[0].geometry.location;
         papp.reverseGeolocation(papp.userLocation);
+        papp.generateUserMarker(papp.userLocation);
         papp.map.setCenter(papp.userLocation);
         papp.map.setZoom(16);
         papp.getAddress(result);
@@ -250,36 +264,42 @@ papp.reverseGeolocation = function(pos) {
 }
 
 papp.getAddress = function(addressResult) {
-    if (addressResult.status !== "OK") {
-        console.log("no results");
-    } else {
-            var address = addressResult.results[0].address_components;
-            var postalCodeObject = address.filter(function(component){
-                return component.types[0] === "postal_code";
-            });
-            var postalCode = postalCodeObject[0].long_name;
-        }
+    if (addressResult.status === "OK") {
+        let useCity = false;
+        let addressToSearch = '';
 
-        if (postalCode.length < 5) {
-            var cityObject = address.filter(function(component){
+        const addressComponents = addressResult.results[0].address_components;
+
+        const postalCodeComponent = addressComponents.filter(function(component){
+            return component.types[0] === "postal_code";
+        });
+
+        if(postalCodeComponent !== undefined) {
+            const cityComponent = addressComponents.filter(function(component){
                 return component.types[0] === "locality";
             });
-            var provinceObject = address.filter(function(component){
+
+            const provinceComponent = addressComponents.filter(function(component){
                 return component.types[0] === "administrative_area_level_1";
             });
-            var city = cityObject[0].long_name;
-            var province = provinceObject[0].long_name;
-            var newCity = city + ', ' + province;
-            var useCity = 1;
+
+            const city = cityComponent[0].long_name;
+            const province = provinceComponent[0].long_name;
+
+            addressToSearch = city + ', ' + province;
+            useCity = true;
+        } 
+        else {
+            addressToSearch = postalCodeComponent[0].long_name;
         }
 
-        if (useCity === 1) {
-            papp.getShelters(newCity);
-        } else {
-            papp.getShelters(postalCode);
-        }
+        papp.getShelters(addressToSearch);
+    } 
+    else {
+        console.log("no results");
+    }
 
-    };
+};
 
     papp.getShelters = function(location) {
         $.ajax({
@@ -296,8 +316,12 @@ papp.getAddress = function(addressResult) {
          papp.petData = petfinderInfo.petfinder.pets.pet;
          let shelterAddressesArray =[];
          let shelterIdsArray =[];
+         let address = '';
          for (var i=0; i < papp.petData.length; i++) {
-            shelterAddressesArray.push(papp.petData[i].contact.address1.$t + ', ' + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
+            if(papp.petData[i].contact.address1.$t !== undefined) {
+                address = `${papp.petData[i].contact.address1.$t}, `;
+            }
+            shelterAddressesArray.push(address + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
             shelterIdsArray.push(papp.petData[i].shelterId.$t);
         }
         shelterAddressesArray = _.uniq(shelterAddressesArray);
@@ -325,6 +349,7 @@ papp.getShelterInfo = function(shelterAddressesArray, shelterIdsArray) {
             shelters = shelters.map(function(shelter) {
                 return {name: shelter[0].petfinder.shelter.name.$t, shelterId: shelter[0].petfinder.shelter.id.$t};
             });
+
             papp.getSheltersGeoCode(shelterAddressesArray, shelters);
         });
 }
@@ -344,16 +369,31 @@ papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
     $.when.apply(null, shelterGeoArray)
         .then(function() {
             let sheltersGeo = Array.prototype.slice.call(arguments);
-            sheltersGeo = sheltersGeo.map(function(shelter) {
-                return shelter[0].results[0].geometry.location;
-            });
-            for (var x =0; x < sheltersGeo.length; x++){
-                papp.markers.push(papp.generateMapMarker(sheltersGeo[x]));
+            if(sheltersGeo.length > 0) {
+                sheltersGeo = sheltersGeo.map(function(shelter) {
+                    return shelter[0].results[0].geometry.location;
+                });
+
+                // reset neardby markers
+                papp.markers.forEach(function(marker) {
+                    marker.setMap(null);
+                });
+                papp.markers = [];
+                // end of reset
+
+                for (var x = 0; x < sheltersGeo.length; x++){
+                    papp.markers.push(papp.generateMapMarker(sheltersGeo[x]));
+                }
+                for (var y = 0; y < shelterNames.length; y++) {
+                    papp.markers[y].setIcon(papp.birdMarkerImage);
+                    papp.assignInfoWindow(papp.markers[y], shelterNames[y]);
+                }
+                papp.setMapBounds(papp.markers);
             }
-            for (var y=0; y < shelterNames.length; y++) {
-                papp.assignInfoWindow(papp.markers[y], shelterNames[y]);
+            else {
+                console.log('No shelters nearby');
             }
-            papp.setMapBounds(papp.markers);
+            
         });
 }
 
@@ -405,7 +445,6 @@ papp.events = function() {
 };
 
 papp.init = function(){
-    papp.searchFor();
     papp.initMap();
     papp.events();
 
