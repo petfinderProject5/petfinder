@@ -107,7 +107,7 @@ papp.locateUser = function () {
             // papp.infoWindow.setContent('Location found.');
             papp.map.setCenter(pos);
             papp.map.setZoom(16);
-            papp.generateUserMapMarker(pos);
+            papp.generateUserMarker(pos);
             papp.reverseGeolocation(pos);
         }, 
     function() {
@@ -406,6 +406,42 @@ papp.setMapBounds = function(markers) {
     papp.map.fitBounds(bounds);
 }
 
+// Was bored, added a "World's Largest Rubber Duck" easter egg in Lake Ontario. -Brian
+papp.spawnTheDuck = function() {
+    // The Duck's location
+    const pos = {lat: 43.6389166, lng: -79.3653652};
+
+    // The Duck's marker
+    const marker = new google.maps.Marker({
+        map: papp.map,
+        position: pos,
+        icon: 'assets/images/wlrd_marker.png',
+        visible: false
+    });
+
+    // When the Duck is clicked, it's home page is opened in a new tab
+    google.maps.event.addListener(marker, 'click', function() {
+        const win = window.open('https://www.thebigduck.us/', '_blank');
+        if (win) {
+            win.focus();
+        } 
+    });
+
+    // The Duck marker is only visible when the user zooms in to 17 or higher
+    papp.map.addListener('zoom_changed', function() {
+        console.log(papp.map.getZoom());
+        if(papp.map.getZoom() >= 17) {
+            console.log('show Duck', marker);
+            marker.setVisible(true);
+        }
+        else {
+            marker.setVisible(false);
+       }
+    });
+
+}
+
+
 papp.events = function() {
     $('button').on('click', function() {
         const buttonClicked = $(this);
@@ -447,7 +483,7 @@ papp.events = function() {
 papp.init = function(){
     papp.initMap();
     papp.events();
-
+    papp.spawnTheDuck();
 }
 
 $(function(){
