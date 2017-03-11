@@ -1,7 +1,10 @@
 @import 'setup';
-@import 'carousel';
-@import 'petsDisplay';
 @import 'variables';
+@import 'petContainer';
+@import 'carousel';
+@import 'petGallery';
+@import 'petsDisplay';
+
 
 
 h1, h2, h3, h4, h5, h6, p{
@@ -21,12 +24,7 @@ html, body {
   color: goldenrod;
 }
 
-.wrapper {
-  max-width: 1170px;
-  margin: 0 auto;
-  background-color: white;
 
-}
 
 h1 {
   font-family: $brandHeadline;
@@ -97,11 +95,9 @@ button.viewDetails {
 	padding:5px 10px;
 	border-radius: 3px;
 }
-
-button.viewDetails:hover {
-	cursor:pointer;
-	opacity:0.5;
-
+.wrapper{
+  max-width: 1170px;
+  margin: 0 auto;
 }
 
 .infoBox {
