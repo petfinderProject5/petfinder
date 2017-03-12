@@ -92,7 +92,6 @@ papp.initMap = function() {
     });
 
     papp.infoWindow = new google.maps.InfoWindow({map: null});
-    // Try HTML5 geolocation.
 }
 
 papp.locateUser = function () {
@@ -133,39 +132,47 @@ papp.generateMapMarker = function(places) {
         map: papp.map,
         position: places
     });
-    
-
     return marker;
 }
+
 papp.displayPetCard = function(petInfo) {
-   $('<div>')
-   .addClass('petCard')
-   .appendTo('.petsDisplay');
+    // create a const to hold the petCard dom object, add petCard class, 
+    // and store the pet's id as petId in the object
+    const petCard = $('<div>')
+    .addClass('petCard')
+    .data('petId', petInfo.id.$t);
+
+    // Check if there are any photos available, if not use no_images_found image
     if(petInfo.media.photos !== undefined) {
-    // Build carousel and it's items
-    $('<img/>')
-    .addClass('cardImg')
-    .attr('src', petInfo.media.photos.photo[2].$t)
-    .prependTo('.petCard');
+        // Build carousel and it's items
+        petCard.append($('<img/>')
+        .addClass('cardImg')
+        .attr('src', petInfo.media.photos.photo[2].$t));
     }
     else {
-        $('<img/>')
+         petCard.append($('<img/>')
         .addClass('cardImg')
-        .attr('src', 'assets/images/no_images_found.jpg')
-        .prependTo('.petCard');
+        .attr('src', 'assets/images/no_images_found.jpg'));
     }
-    $('<div>')
-    .addClass('cardDetail')
-    .appendTo('.petCard');
-    $('<div>')
-    .addClass('cardName')
-    .appendTo('.cardDetail');
-    $('<div>')
-    .addClass('cardBreed')
-    .appendTo('.cardDetail');
-     $('.cardName').text(petInfo.name.$t);
-    $('.cardBreed').text(petInfo.breeds.breed.$t);
 
+    // Add the pet's name and breen to the card
+    petCard.append(
+        $('<div>')
+        .addClass('cardDetail')
+        .append(
+            $('<div>')
+            .addClass('cardName')
+            .text(petInfo.name.$t)
+        )
+        .append(
+            $('<div>')
+            .addClass('cardBreed')
+            .text(petInfo.breeds.breed.$t)
+        )
+    );
+
+    // Append the pet card(with all it's data) to the page
+    petCard.appendTo('.petsDisplay');
 }
 
 papp.generateUserMarker = function(pos) {
@@ -182,16 +189,29 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             papp.selectedShelterInfo = papp.petData.filter(function(pet){
                 return pet.shelterId.$t === contentInfo.shelterId;
             });
-            //replace this console.log to call to function to display bird data
-            console.log(papp.selectedShelterInfo);
+
             $('.resultTitle').text(contentInfo.name);
+
             $('html, body').animate({
-         scrollTop: $(".resultTitle").offset().top
-     }, 2000);
-            papp.displayPetCard(papp.selectedShelterInfo[0]);
-            // for (i=0; i < papp.selectedShelterInfo.length; i++) {
-            //     papp.displayPetCard(papp.selectedShelterInfo[i]);
-            // }
+                scrollTop: $(".wrapper").offset().top
+            }, 2000);
+
+            // Clear existing petCards
+            $('.petsDisplay').empty();
+
+            // Generate new petCards
+            papp.selectedShelterInfo.forEach(function(shelter){
+                papp.displayPetCard(shelter);
+            });
+
+            // Bind Event to newly created petCards
+            $('.petCard').on('click', function(event) {
+                console.log('card clicked');
+                console.log($(this).data('petId'));
+                // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
+                //       Then display all of that pet's details
+            });
+
         });
     });
 }
