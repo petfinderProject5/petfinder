@@ -207,9 +207,21 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             // Bind Event to newly created petCards
             $('.petCard').on('click', function(event) {
                 console.log('card clicked');
-                console.log($(this).data('petId'));
+                // console.log($(this).data('petId'));
+                const currentBirdId = $(this).data('petId');
                 // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
                 //       Then display all of that pet's details
+                const displayValues = papp.petData.filter(function(values){
+                    return values.id.$t === currentBirdId;
+                })
+                console.log(displayValues);
+                const name = displayValues[0].name.$t;
+                const age = displayValues[0].age.$t;
+                const gender = displayValues[0].sex.$t;
+                const description = displayValues[0].description.$t;
+
+                papp.elements.$petName.append(name);
+                console.log(name, age, gender, description);
             });
 
         });
