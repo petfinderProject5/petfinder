@@ -487,9 +487,7 @@ papp.spawnTheDuck = function() {
 
     // The Duck marker is only visible when the user zooms in to 17 or higher
     papp.map.addListener('zoom_changed', function() {
-        console.log(papp.map.getZoom());
         if(papp.map.getZoom() >= 17) {
-            console.log('show Duck', marker);
             marker.setVisible(true);
         }
         else {
