@@ -123,7 +123,6 @@ papp.initMap = function() {
     });
 
     papp.infoWindow = new google.maps.InfoWindow({map: null});
-    // Try HTML5 geolocation.
 }
 
 papp.locateUser = function () {
@@ -138,7 +137,7 @@ papp.locateUser = function () {
             // papp.infoWindow.setContent('Location found.');
             papp.map.setCenter(pos);
             papp.map.setZoom(16);
-            papp.generateUserMapMarker(pos);
+            papp.generateUserMarker(pos);
             papp.reverseGeolocation(pos);
         }, 
     function() {
@@ -164,40 +163,50 @@ papp.generateMapMarker = function(places) {
         map: papp.map,
         position: places
     });
-    
-
     return marker;
 }
+
 papp.displayPetCard = function(petInfo) {
    $('<div>')
    .addClass('petCard')
    .appendTo('.petsDisplay');
-   // .appedTo('.petContainer');
+    // create a const to hold the petCard dom object, add petCard class, 
+    // and store the pet's id as petId in the object
+    const petCard = $('<div>')
+    .addClass('petCard')
+    .data('petId', petInfo.id.$t);
+
+    // Check if there are any photos available, if not use no_images_found image
     if(petInfo.media.photos !== undefined) {
-    // Build carousel and it's items
-    $('<img/>')
-    .addClass('cardImg')
-    .attr('src', petInfo.media.photos.photo[2].$t)
-    .prependTo('.petCard');
+        // Build carousel and it's items
+        petCard.append($('<img/>')
+        .addClass('cardImg')
+        .attr('src', petInfo.media.photos.photo[2].$t));
     }
     else {
-        $('<img/>')
+         petCard.append($('<img/>')
         .addClass('cardImg')
-        .attr('src', 'assets/images/no_images_found.jpg')
-        .prependTo('.petCard');
+        .attr('src', 'assets/images/no_images_found.jpg'));
     }
-    $('<div>')
-    .addClass('cardDetail')
-    .appendTo('.petCard');
-    $('<div>')
-    .addClass('cardName')
-    .appendTo('.cardDetail');
-    $('<div>')
-    .addClass('cardBreed')
-    .appendTo('.cardDetail');
-     $('.cardName').text(petInfo.name.$t);
-    $('.cardBreed').text(petInfo.breeds.breed.$t);
 
+    // Add the pet's name and breen to the card
+    petCard.append(
+        $('<div>')
+        .addClass('cardDetail')
+        .append(
+            $('<div>')
+            .addClass('cardName')
+            .text(petInfo.name.$t)
+        )
+        .append(
+            $('<div>')
+            .addClass('cardBreed')
+            .text(petInfo.breeds.breed.$t)
+        )
+    );
+
+    // Append the pet card(with all it's data) to the page
+    petCard.appendTo('.petsDisplay');
 }
 
 // Display Pet Container
@@ -221,17 +230,35 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             papp.selectedShelterInfo = papp.petData.filter(function(pet){
                 return pet.shelterId.$t === contentInfo.shelterId;
             });
-            //replace this console.log to call to function to display bird data
-            console.log(papp.selectedShelterInfo);
+
             $('.resultTitle').text(contentInfo.name);
+
             $('html, body').animate({
          scrollTop: $(".resultTitle").offset().top
      }, 2000);
-            $('.petDisplayContainer').show();
             papp.displayPetCard(papp.selectedShelterInfo[0]);
             // for (i=0; i < papp.selectedShelterInfo.length; i++) {
             //     papp.displayPetCard(papp.selectedShelterInfo[i]);
             // }
+                scrollTop: $(".wrapper").offset().top
+            }, 2000);
+
+            // Clear existing petCards
+            $('.petsDisplay').empty();
+
+            // Generate new petCards
+            papp.selectedShelterInfo.forEach(function(shelter){
+                papp.displayPetCard(shelter);
+            });
+
+            // Bind Event to newly created petCards
+            $('.petCard').on('click', function(event) {
+                console.log('card clicked');
+                console.log($(this).data('petId'));
+                // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
+                //       Then display all of that pet's details
+            });
+
         });
     });
 }
@@ -484,6 +511,42 @@ papp.setMapBounds = function(markers) {
     papp.map.fitBounds(bounds);
 }
 
+// Was bored, added a "World's Largest Rubber Duck" easter egg in Lake Ontario. -Brian
+papp.spawnTheDuck = function() {
+    // The Duck's location
+    const pos = {lat: 43.6389166, lng: -79.3653652};
+
+    // The Duck's marker
+    const marker = new google.maps.Marker({
+        map: papp.map,
+        position: pos,
+        icon: 'assets/images/wlrd_marker.png',
+        visible: false
+    });
+
+    // When the Duck is clicked, it's home page is opened in a new tab
+    google.maps.event.addListener(marker, 'click', function() {
+        const win = window.open('https://www.thebigduck.us/', '_blank');
+        if (win) {
+            win.focus();
+        } 
+    });
+
+    // The Duck marker is only visible when the user zooms in to 17 or higher
+    papp.map.addListener('zoom_changed', function() {
+        console.log(papp.map.getZoom());
+        if(papp.map.getZoom() >= 17) {
+            console.log('show Duck', marker);
+            marker.setVisible(true);
+        }
+        else {
+            marker.setVisible(false);
+       }
+    });
+
+}
+
+
 papp.events = function() {
     $('button').on('click', function() {
         const buttonClicked = $(this);
@@ -525,7 +588,7 @@ papp.events = function() {
 papp.init = function(){
     papp.initMap();
     papp.events();
-
+    papp.spawnTheDuck();
 }
 
 $(function(){
