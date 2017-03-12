@@ -60,61 +60,30 @@ papp.displayPetMedia = function(media) {
     });
 };
 
-papp.dePopulateDisplayContainer = function() {
+papp.displayPetInfo = function(petIndex) {
+    const name = papp.selectedShelterInfo[petIndex].name.$t;
+    const age = papp.selectedShelterInfo[petIndex].age.$t;
+    const gender = papp.selectedShelterInfo[petIndex].sex.$t;
+    const media = papp.selectedShelterInfo[petIndex].media;
+    const streetAddress = papp.selectedShelterInfo[petIndex].contact.address1.$t;
+    const city = papp.selectedShelterInfo[petIndex].contact.city.$t;
+    const state = papp.selectedShelterInfo[petIndex].contact.state.$t;
+    const zip = papp.selectedShelterInfo[petIndex].contact.zip.$t;
+    const email = papp.selectedShelterInfo[petIndex].contact.email.$t;
+    const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${email}`;
 
+    papp.displayPetMedia(media);
 
-}
-
-papp.populateBirdDisplayContainer = function() {
-    // $('#petName').html(papp.selectedShelterInfo['name.$t']);
-        const name = papp.selectedShelterInfo[0].name.$t;
-        const age = papp.selectedShelterInfo[0].age.$t;
-        const gender = papp.selectedShelterInfo[0].sex.$t;
-        const media = papp.selectedShelterInfo[0].media;
-        const streetAddress = papp.selectedShelterInfo[0].contact.address1.$t; 
-
-        let description = 'No description availible for this pet.'
-        if(papp.petData[0].description.$t !== undefined) {
-            description = papp.petData[0].description.$t;
-        }
-        papp.displayPetMedia(media);
-   
-        // ('.petCard').removeClass('petCard');
-        papp.elements.$petName.html("<span>Name:</span> " + name);
-        papp.elements.$petGender.html("<span>Gender:</span> " + gender);
-        papp.elements.$petAge.html("<span>Age:</span> " + age);
-        papp.elements.$petDescription.html("<span>About Me:</span> " + description);
-        papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
-
-}
-
-// papp.displayPetInfo = function(petIndex) {
-//     const name = papp.selectedShelterInfo[petIndex].name.$t;
-//     const age = papp.selectedShelterInfo[petIndex].age.$t;
-//     const gender = papp.selectedShelterInfo[petIndex].sex.$t;
-//     const media = papp.selectedShelterInfo[petIndex].media;
-//     const streetAddress = papp.selectedShelterInfo[petIndex].contact.address1.$t;
-//     const city = papp.selectedShelterInfo[petIndex].contact.city.$t;
-//     const state = papp.selectedShelterInfo[petIndex].contact.state.$t;
-//     const zip = papp.selectedShelterInfo[petIndex].contact.zip.$t;
-//     const email = papp.selectedShelterInfo[petIndex].contact.email.$t;
-//     const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${email}`;
-
-//     papp.displayPetMedia(media);
-
-
-    // papp.elements.$petName.html("<span>Name:</span> " + name);
-    // papp.elements.$petGender.html("<span>Gender:</span> " + gender);
-    // papp.elements.$petAge.html("<span>Age:</span> " + age);
-    // papp.elements.$petDescription.html("<span>About Me:</span> " + description);
-    // papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
-
-    // let description = 'No description availible for this pet.'
-    // if(papp.petData[petIndex].description.$t !== undefined) {
-    //     description = papp.petData[petIndex].description.$t;
-    // }
-//     
-// };
+    let description = 'No description availible for this pet.'
+    if(papp.petData[petIndex].description.$t !== undefined) {
+        description = papp.petData[petIndex].description.$t;
+    }
+    papp.elements.$petName.html("<span>Name:</span> " + name);
+    papp.elements.$petGender.html("<span>Gender:</span> " + gender);
+    papp.elements.$petAge.html("<span>Age:</span> " + age);
+    papp.elements.$petDescription.html("<span>About Me:</span> " + description);
+    papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
+};
 
 papp.initMap = function() {
     papp.map = new google.maps.Map(document.getElementById('map'), {
@@ -167,9 +136,6 @@ papp.generateMapMarker = function(places) {
 }
 
 papp.displayPetCard = function(petInfo) {
-   $('<div>')
-   .addClass('petCard')
-   .appendTo('.petsDisplay');
     // create a const to hold the petCard dom object, add petCard class, 
     // and store the pet's id as petId in the object
     const petCard = $('<div>')
@@ -209,13 +175,6 @@ papp.displayPetCard = function(petInfo) {
     petCard.appendTo('.petsDisplay');
 }
 
-// Display Pet Container
-// $('.petsDisplay').on('click', function(){
-//     console.log('petsDisplay being clicked');
-//     papp.populateBirdDisplayContainer();
-//     $('displayContainer').hide();
-// })
-
 papp.generateUserMarker = function(pos) {
     papp.userMarker = papp.generateMapMarker(pos);
     papp.userMarker.setIcon(papp.userMarkerImage);
@@ -234,12 +193,6 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             $('.resultTitle').text(contentInfo.name);
 
             $('html, body').animate({
-         scrollTop: $(".resultTitle").offset().top
-     }, 2000);
-            papp.displayPetCard(papp.selectedShelterInfo[0]);
-            // for (i=0; i < papp.selectedShelterInfo.length; i++) {
-            //     papp.displayPetCard(papp.selectedShelterInfo[i]);
-            // }
                 scrollTop: $(".wrapper").offset().top
             }, 2000);
 
@@ -254,9 +207,21 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             // Bind Event to newly created petCards
             $('.petCard').on('click', function(event) {
                 console.log('card clicked');
-                console.log($(this).data('petId'));
+                // console.log($(this).data('petId'));
+                const currentBirdId = $(this).data('petId');
                 // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
                 //       Then display all of that pet's details
+                const displayValues = papp.petData.filter(function(values){
+                    return values.id.$t === currentBirdId;
+                })
+                console.log(displayValues);
+                const name = displayValues[0].name.$t;
+                const age = displayValues[0].age.$t;
+                const gender = displayValues[0].sex.$t;
+                const description = displayValues[0].description.$t;
+
+                papp.elements.$petName.append(name);
+                console.log(name, age, gender, description);
             });
 
         });
@@ -550,18 +515,18 @@ papp.spawnTheDuck = function() {
 papp.events = function() {
     $('button').on('click', function() {
         const buttonClicked = $(this);
-        // if(buttonClicked.val() === 'pet1') {
-        //     papp.displayPetInfo(0);
-        // }
-        // else if(buttonClicked.val() === 'pet2') {
-        //     papp.displayPetInfo(1);
-        // }
-        // else if(buttonClicked.val() === 'pet3') {
-        //     papp.displayPetInfo(2);
-        // }
-        // else if(buttonClicked.val() === 'pet4') {
-        //     papp.displayPetInfo(15);
-        // }
+        if(buttonClicked.val() === 'pet1') {
+            papp.displayPetInfo(0);
+        }
+        else if(buttonClicked.val() === 'pet2') {
+            papp.displayPetInfo(1);
+        }
+        else if(buttonClicked.val() === 'pet3') {
+            papp.displayPetInfo(2);
+        }
+        else if(buttonClicked.val() === 'pet4') {
+            papp.displayPetInfo(15);
+        }
     });
 
     $('#searchForm').on('submit', function(event) {
