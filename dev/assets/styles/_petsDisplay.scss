@@ -1,15 +1,5 @@
 @import 'variables';
 
-.wrapper{
-  max-width: 1170px;
-  // min-height: 100vh;
-  margin: 40px auto;
-}
-
-.wrapper .hidden {
-	display: none;
-}
-
 .petsDisplay {
 	display: flex;
 	flex-wrap: wrap;
@@ -22,11 +12,9 @@
 	display: flex;
 	flex-direction: column;
 	width: 250px;
-	min-height: 200px;
+	height: 200px;
 	margin-bottom: 20px;
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-	white-space: nowrap;
-	cursor: pointer;
 }
 
 .cardImg {
@@ -41,5 +29,5 @@
 	display: flex;
 	justify-content: space-between;
 	background-color: white;
-	padding: 14px;
+	padding: 20px;
 }
