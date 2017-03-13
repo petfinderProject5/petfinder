@@ -175,9 +175,14 @@ papp.displayPetCard = function(petInfo) {
     petCard.appendTo('.petsDisplay');
 }
 
-papp.generateUserMarker = function(pos) {
-    papp.userMarker = papp.generateMapMarker(pos);
-    papp.userMarker.setIcon(papp.userMarkerImage);
+papp.generateUserMarker = function(pos) {    
+    if(papp.userMarker === undefined) {
+        papp.userMarker = papp.generateMapMarker(pos);
+        papp.userMarker.setIcon(papp.userMarkerImage);      
+    }
+    else {
+        papp.userMarker.setPosition(pos);
+    }
 }
 
 papp.assignInfoWindow = function(marker, contentInfo) {
@@ -406,9 +411,9 @@ papp.getShelters = function(location) {
          for (var i=0; i < papp.petData.length; i++) {
             if(papp.petData[i].contact.address1.$t !== undefined) {
                 address = `${papp.petData[i].contact.address1.$t}, `;
+                shelterIdsArray.push(papp.petData[i].shelterId.$t);
             }
             shelterAddressesArray.push(address + papp.petData[i].contact.city.$t + ', ' + papp.petData[i].contact.state.$t);
-            shelterIdsArray.push(papp.petData[i].shelterId.$t);
         }
         shelterAddressesArray = _.uniq(shelterAddressesArray);
         shelterIdsArray = _.uniq(shelterIdsArray);
@@ -435,7 +440,6 @@ papp.getShelterInfo = function(shelterAddressesArray, shelterIdsArray) {
             shelters = shelters.map(function(shelter) {
                 return {name: shelter[0].petfinder.shelter.name.$t, shelterId: shelter[0].petfinder.shelter.id.$t};
             });
-
             papp.getSheltersGeoCode(shelterAddressesArray, shelters);
         });
 }
@@ -457,7 +461,10 @@ papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
             let sheltersGeo = Array.prototype.slice.call(arguments);
             if(sheltersGeo.length > 0) {
                 sheltersGeo = sheltersGeo.map(function(shelter) {
-                    return shelter[0].results[0].geometry.location;
+                    if(shelter[0].results.length === 1) {
+                        return shelter[0].results[0].geometry.location;
+                    }
+                    return null;
                 });
 
                 // reset neardby markers
