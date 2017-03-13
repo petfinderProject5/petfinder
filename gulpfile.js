@@ -24,9 +24,9 @@ gulp.task('styles', () => {
 
 gulp.task('javascript', () => {
     return gulp.src('./dev/assets/scripts/main.js')
-    // .pipe(babel({
-    //     presets: ['es2015']
-    // }))
+    .pipe(babel({
+        presets: ['es2015']
+    }))
     .pipe(gulp.dest('./public/assets/scripts/'))
     .pipe(reload({stream: true}));
 });
@@ -36,5 +36,7 @@ gulp.task('watch', () => {
     gulp.watch('./dev/assets/scripts/main.js', ['javascript']);
     gulp.watch('./public/*.html', reload);
 });
+
+gulp.task('build', ['styles', 'javascript']);
 
 gulp.task('default', ['browser-sync', 'styles', 'javascript', 'watch']);
