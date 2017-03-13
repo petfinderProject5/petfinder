@@ -29,6 +29,15 @@ html, body {
 h1 {
   font-family: $brandHeadline;
   letter-spacing: 2px;
+
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 40px;
+  letter-spacing: 3px;
+
 }
 /* Always set the map height explicitly to define the size of the div * element that contains the map. */
 #map {
@@ -101,3 +110,41 @@ button.viewDetails {
 	align-items:center;
 	flex-direction:column;
 }
+
+.ui-helper-hidden-accessible {
+    display:none;
+}
+
+.backToMap {
+  text-align:center;
+}
+
+.backToMap button {
+  background-color:$brandGreen;
+  border:none;
+  padding:20px 30px;
+  margin:20px;
+  color:white;
+  border-radius:5px;
+}
+
+.backToMap button:hover {
+  cursor:pointer;
+  opacity:0.8;
+}
+
+#autolocate {
+ height: 30px;
+ margin-left: 5px;
+}
+
+#submitButton {
+  height: 30px;
+  margin-left: 5px;
+}
+
+#searchField {
+  height: 30px;
+  padding-left: 7px;
+}
+
