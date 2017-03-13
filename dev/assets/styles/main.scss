@@ -111,6 +111,28 @@ button.viewDetails {
 	flex-direction:column;
 }
 
+.ui-helper-hidden-accessible {
+    display:none;
+}
+
+.backToMap {
+  text-align:center;
+}
+
+.backToMap button {
+  background-color:$brandGreen;
+  border:none;
+  padding:20px 30px;
+  margin:20px;
+  color:white;
+  border-radius:5px;
+}
+
+.backToMap button:hover {
+  cursor:pointer;
+  opacity:0.8;
+}
+
 #autolocate {
  height: 30px;
  margin-left: 5px;
@@ -125,3 +147,4 @@ button.viewDetails {
   height: 30px;
   padding-left: 7px;
 }
+
