@@ -101,3 +101,26 @@ button.viewDetails {
 	align-items:center;
 	flex-direction:column;
 }
+
+.ui-helper-hidden-accessible {
+    display:none;
+}
+
+.backToMap {
+  text-align:center;
+}
+
+.backToMap button {
+  background-color:$brandGreen;
+  border:none;
+  padding:20px 30px;
+  margin:20px;
+  color:white;
+  border-radius:5px;
+}
+
+.backToMap button:hover {
+  cursor:pointer;
+  opacity:0.8;
+}
+

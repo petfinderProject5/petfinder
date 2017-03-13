@@ -191,7 +191,10 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             });
 
             $('.resultTitle').text(contentInfo.name);
-
+            //unhide the containers and scroll to the pet cards
+            $('.wrapper').show();
+            $('.petDisplayContainer').show();
+            $('.backToMap').show();
             $('html, body').animate({
                 scrollTop: $(".wrapper").offset().top
             }, 2000);
@@ -207,6 +210,10 @@ papp.assignInfoWindow = function(marker, contentInfo) {
             // Bind Event to newly created petCards
             $('.petCard').on('click', function(event) {
                 console.log('card clicked');
+                //scroll down to pet details
+                $('html, body').animate({
+                    scrollTop: $(".petDisplayContainer").offset().top
+                }, 2000);
                 // console.log($(this).data('petId'));
                 const currentBirdId = $(this).data('petId');
                 // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
@@ -561,6 +568,14 @@ papp.init = function(){
     papp.initMap();
     papp.events();
     papp.spawnTheDuck();
+    $('.toMap').on('click', function(){
+        $('html, body').animate({
+            scrollTop: $(".searchOverlay").offset().top
+        }, 2000);
+    });
+    $('.wrapper').hide();
+    $('.petDisplayContainer').hide();
+    $('.backToMap').hide();
 }
 
 $(function(){
