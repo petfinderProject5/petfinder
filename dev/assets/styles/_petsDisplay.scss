@@ -14,6 +14,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
+	margin-top: 80px;
 	// margin: 20px;
 }
 
@@ -47,6 +48,7 @@
 
 .cardName {
 	text-align: center;
+	text-transform: capitalize;
 }
 
 .cardBreed {
