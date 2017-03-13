@@ -219,6 +219,8 @@ papp.assignInfoWindow = function(marker, contentInfo) {
                 const age = displayValues[0].age.$t;
                 const gender = displayValues[0].sex.$t;
                 const description = displayValues[0].description.$t;
+                const media = papp.displayValues[0[.media;
+
 
                 papp.elements.$petName.append(name);
                 console.log(name, age, gender, description);
