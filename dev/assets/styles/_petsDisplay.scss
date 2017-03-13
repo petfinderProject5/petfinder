@@ -41,5 +41,14 @@
 	display: flex;
 	justify-content: space-between;
 	background-color: white;
-	padding: 14px;
+	padding: 20px;
+	flex-direction: column;
+}
+
+.cardName {
+	text-align: center;
+}
+
+.cardBreed {
+	display: none;
 }
