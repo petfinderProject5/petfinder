@@ -2,7 +2,7 @@ var papp = {};
 
 papp.map;
 
-papp.googleApiKey = 'AIzaSyAIE6FNON09T5VbnCh_HfoADsz1prORR68';
+papp.googleApiKey = 'AIzaSyADQWtBBozt_p2XH0tYlJQ71GOqcI3XtEk';
 
 papp.petApiKey = '5643b4e4140ed1e99bc21e6bbbfb3fd6';
 
@@ -219,9 +219,14 @@ papp.assignInfoWindow = function(marker, contentInfo) {
                 const age = displayValues[0].age.$t;
                 const gender = displayValues[0].sex.$t;
                 const description = displayValues[0].description.$t;
+                // const media = papp.displayValues.media.photos[0];
 
-                papp.elements.$petName.append(name);
-                console.log(name, age, gender, description);
+                // papp.displayPetMedia(media);
+
+                papp.elements.$petName.html("<span>Name:</span> " + name);
+                papp.elements.$petGender.html("<span>Gender:</span> " + gender);
+                papp.elements.$petAge.html("<span>Age:</span> " + age);
+                papp.elements.$petDescription.html("<span>About Me:</span> " + description);
             });
 
         });
