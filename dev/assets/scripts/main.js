@@ -60,31 +60,6 @@ papp.displayPetMedia = function(media) {
     });
 };
 
-// papp.displayPetInfo = function(petIndex) {
-//     const name = papp.selectedShelterInfo[petIndex].name.$t;
-//     const age = papp.selectedShelterInfo[petIndex].age.$t;
-//     const gender = papp.selectedShelterInfo[petIndex].sex.$t;
-//     const media = papp.selectedShelterInfo[petIndex].media;
-//     const streetAddress = papp.selectedShelterInfo[petIndex].contact.address1.$t;
-//     const city = papp.selectedShelterInfo[petIndex].contact.city.$t;
-//     const state = papp.selectedShelterInfo[petIndex].contact.state.$t;
-//     const zip = papp.selectedShelterInfo[petIndex].contact.zip.$t;
-//     const email = papp.selectedShelterInfo[petIndex].contact.email.$t;
-//     const address = `${streetAddress}, ${city}, ${state}, ${zip}, ${email}`;
-
-//     papp.displayPetMedia(media);
-
-//     let description = 'No description availible for this pet.'
-//     if(papp.petData[petIndex].description.$t !== undefined) {
-//         description = papp.petData[petIndex].description.$t;
-//     }
-//     papp.elements.$petName.html("<span>Name:</span> " + name);
-//     papp.elements.$petGender.html("<span>Gender:</span> " + gender);
-//     papp.elements.$petAge.html("<span>Age:</span> " + age);
-//     papp.elements.$petDescription.html("<span>About Me:</span> " + description);
-//     papp.elements.$petAddress.html("<span>Shelter Address:</span> " + address);
-// };
-
 papp.initMap = function() {
     papp.map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 50.09024, lng: -95.712891},
@@ -214,12 +189,10 @@ papp.assignInfoWindow = function(marker, contentInfo) {
 
             // Bind Event to newly created petCards
             $('.petCard').on('click', function(event) {
-                console.log('card clicked');
                 //scroll down to pet details
                 $('html, body').animate({
                     scrollTop: $(".petDisplayContainer").offset().top
                 }, 2000);
-                // console.log($(this).data('petId'));
                 const currentBirdId = $(this).data('petId');
                 // TODO: Take this pet id and filter papp.petData for it, and return that pets's data.
                 //       Then display all of that pet's details
@@ -460,11 +433,12 @@ papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
         .then(function() {
             let sheltersGeo = Array.prototype.slice.call(arguments);
             if(sheltersGeo.length > 0) {
-                sheltersGeo = sheltersGeo.map(function(shelter) {
-                    if(shelter[0].results.length === 1) {
-                        return shelter[0].results[0].geometry.location;
+                const sheltersGeoNew = [];
+                sheltersGeo.forEach(function(shelter) {
+                    if(shelter[0].results.length === 1 && shelter[0].status === "OK" && shelter[0].results[0].geometry.location ) {
+                        sheltersGeoNew.push(shelter[0].results[0].geometry.location);
+                       
                     }
-                    return null;
                 });
 
                 // reset neardby markers
@@ -474,19 +448,19 @@ papp.getSheltersGeoCode = function(shelterAddresses, shelterNames) {
                 papp.markers = [];
                 // end of reset
 
-                for (var x = 0; x < sheltersGeo.length; x++){
-                    papp.markers.push(papp.generateMapMarker(sheltersGeo[x]));
+                for (var x = 0; x < sheltersGeoNew.length; x++){
+                    papp.markers.push(papp.generateMapMarker(sheltersGeoNew[x]));
+                    papp.markers[x].setIcon(papp.birdMarkerImage);
+                    papp.assignInfoWindow(papp.markers[x], shelterNames[x]);
                 }
-                for (var y = 0; y < shelterNames.length; y++) {
-                    papp.markers[y].setIcon(papp.birdMarkerImage);
-                    papp.assignInfoWindow(papp.markers[y], shelterNames[y]);
-                }
-                papp.setMapBounds(papp.markers);
+             
+                const tempArray = Array.from(papp.markers);
+                tempArray.push(papp.userMarker);
+                papp.setMapBounds(tempArray);
             }
             else {
                 console.log('No shelters nearby');
             }
-            
         });
 }
 
@@ -534,26 +508,9 @@ papp.spawnTheDuck = function() {
 
 
 papp.events = function() {
-    // $('button').on('click', function() {
-    //     const buttonClicked = $(this);
-    //     if(buttonClicked.val() === 'pet1') {
-    //         papp.displayPetInfo(0);
-    //     }
-    //     else if(buttonClicked.val() === 'pet2') {
-    //         papp.displayPetInfo(1);
-    //     }
-    //     else if(buttonClicked.val() === 'pet3') {
-    //         papp.displayPetInfo(2);
-    //     }
-    //     else if(buttonClicked.val() === 'pet4') {
-    //         papp.displayPetInfo(15);
-    //     }
-    // });
-
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
 
-        console.log('form submitted')
         if(papp.userSearchInputResult !== undefined) {
             papp.placeToPos(papp.userSearchInputResult);
         }
